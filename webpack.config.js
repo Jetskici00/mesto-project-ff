@@ -3,18 +3,16 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const isDev = process.env.NODE_ENV === "development";
-
 module.exports = {
   entry: "./src/pages/index.js",
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.js",
   },
-  mode: isDev ? "development" : "production",
+  mode: "development",
   devServer: {
     static: path.resolve(__dirname, "./dist"),
-    compress: isDev,
+    compress: true,
     port: 8080,
     open: true,
   },
