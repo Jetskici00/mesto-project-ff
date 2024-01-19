@@ -80,7 +80,6 @@ const handlePopupProfileButtonOpenClick = () => {
 
 // Функция для открытия модального окна добавления новой карточки и сброса формы
 const handlePopupCardButtonOpenClick = () => {
-  cardForm.reset();
   openModal(popupCard);
 };
 

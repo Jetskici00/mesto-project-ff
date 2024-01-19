@@ -7,15 +7,15 @@ const handleDocumentKeydown = (event) => {
 };
 
 // Функция для обработки клика по модальному окну
-const handleModalClick = (event) => {
-  if (event.target.classList.contains("popup_is-opened")) {
+const handleModalClick = ({ target }) => {
+  if (target.classList.contains("popup_is-opened")) {
     // Закрытие модального окна при клике на фон
-    return closeModal(event.target);
+    return closeModal(target);
   }
 
-  if (event.target.closest(".popup__close")) {
+  if (target.closest(".popup__close")) {
     // Закрытие модального окна при клике на кнопку закрытия
-    return closeModal(event.target.closest(".popup"));
+    return closeModal(target.closest(".popup"));
   }
 };
 
