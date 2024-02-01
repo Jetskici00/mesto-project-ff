@@ -1,4 +1,4 @@
-# Sprint №5-6 YandexPracticum
+# Sprint №5-6-7 YandexPracticum
 ## Проектная работа "Mesto"
 
 **Использовались:** HTML CSS JS
