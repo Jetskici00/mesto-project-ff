@@ -4,13 +4,14 @@ import {
   openModal,
   handleModalClick,
 } from "../components/modal.js";
-import { createCard as DOMCreateCard } from "../components/card.js";
+import {
+  createCard as DOMCreateCard,
+  handleCardDelete,
+  handleCardLike,
+} from "../components/card.js";
 import {
   getInitialCards,
   createCard,
-  deleteCard,
-  likeCard,
-  unlikeCard,
   getUserInfo,
   updateUserInfo,
   updateUserAvatar,
@@ -69,57 +70,6 @@ const renderLoading = ({ buttonElement, isLoading }) => {
   buttonElement.textContent = buttonText;
 };
 
-// Обработчик лайка карточки
-const handleCardLike = ({ cardId, buttonElement, counterElement }) => {
-  buttonElement.disabled = true;
-
-  const likePromise = buttonElement.classList.contains(
-    "card__like-button_is-active"
-  )
-    ? unlikeCard(cardId)
-    : likeCard(cardId);
-
-  likePromise
-    .then(({ likes }) => {
-      buttonElement.classList.toggle("card__like-button_is-active");
-
-      if (likes.length) {
-        counterElement.classList.add("card__like-counter_is-active");
-        counterElement.textContent = likes.length;
-      } else {
-        counterElement.classList.remove("card__like-counter_is-active");
-        counterElement.textContent = "";
-      }
-    })
-    .catch((error) => console.error(error))
-    .finally(() => {
-      buttonElement.disabled = false;
-    });
-};
-
-// Обработчик удаления карточки
-const handleCardDelete = ({ cardId, buttonElement }) => {
-  openModal(popupConfirm);
-
-  const confirmButtonClickHandler = () => {
-    buttonElement.disabled = true;
-
-    deleteCard(cardId)
-      .then(() => {
-        buttonElement.closest(".card").remove();
-        closeModal(popupConfirm);
-      })
-      .catch((error) => {
-        buttonElement.disabled = false;
-        console.error(error);
-      });
-  };
-
-  popupConfirmButton.addEventListener("click", confirmButtonClickHandler, {
-    once: true,
-  });
-};
-
 // Обработчик отправки формы новой карточки
 const handleCardFormSubmit = (event) => {
   event.preventDefault();
@@ -148,65 +98,51 @@ const handleCardFormSubmit = (event) => {
     });
 };
 
-const handleProfileFormSubmit = (event) => {
+// Общая функция для обработки отправки формы
+const handleFormSubmit = (event, form, buttonElement, submitFunction) => {
   event.preventDefault();
 
   renderLoading({
-    buttonElement: profileFormSubmitButton,
+    buttonElement,
     isLoading: true,
   });
 
-  updateUserInfo({
-    name: profileNameInput.value,
-    description: profileDescriptionInput.value,
-  })
+  // Выполнение функции отправки данных
+  submitFunction()
     .then(({ name, about, avatar }) => {
       setProfile({
         name,
         description: about,
         avatar,
       });
-
-      closeModal(popupProfile);
+      closeModal(form);
     })
     .catch((error) => {
       console.error(error);
     })
     .finally(() => {
       renderLoading({
-        buttonElement: profileFormSubmitButton,
+        buttonElement,
         isLoading: false,
       });
     });
 };
 
+// Обработчик события для формы изменения данных профиля
+const handleProfileFormSubmit = (event) => {
+  handleFormSubmit(event, popupProfile, profileFormSubmitButton, () =>
+    updateUserInfo({
+      name: profileNameInput.value,
+      description: profileDescriptionInput.value,
+    })
+  );
+};
+
+// Обработчик события для формы изменения аватара
 const handleProfileImageFormSubmit = (event) => {
-  event.preventDefault();
-
-  renderLoading({
-    buttonElement: profileImageFormSubmitButton,
-    isLoading: true,
-  });
-
-  updateUserAvatar(profileImageInput.value)
-    .then(({ name, about, avatar }) => {
-      setProfile({
-        name,
-        description: about,
-        avatar,
-      });
-
-      closeModal(popupProfileImage);
-    })
-    .catch((error) => {
-      console.error(error);
-    })
-    .finally(() => {
-      renderLoading({
-        buttonElement: profileImageFormSubmitButton,
-        isLoading: false,
-      });
-    });
+  handleFormSubmit(event, popupProfileImage, profileImageFormSubmitButton, () =>
+    updateUserAvatar(profileImageInput.value)
+  );
 };
 
 const handlePopupProfileButtonOpenClick = () => {

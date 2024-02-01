@@ -1,3 +1,5 @@
+import { deleteCard, likeCard, unlikeCard } from "./api";
+
 const createCard = ({
   currentUserId,
   template,
@@ -70,4 +72,54 @@ const createCard = ({
   return element;
 };
 
-export { createCard };
+// Обработчик лайка карточки
+const handleCardLike = ({ cardId, buttonElement, counterElement }) => {
+  buttonElement.disabled = true;
+  const likePromise = buttonElement.classList.contains(
+    "card__like-button_is-active"
+  )
+    ? unlikeCard(cardId)
+    : likeCard(cardId);
+
+  likePromise
+    .then(({ likes }) => {
+      buttonElement.classList.toggle("card__like-button_is-active");
+
+      if (likes.length) {
+        counterElement.classList.add("card__like-counter_is-active");
+        counterElement.textContent = likes.length;
+      } else {
+        counterElement.classList.remove("card__like-counter_is-active");
+        counterElement.textContent = "";
+      }
+    })
+    .catch((error) => console.error(error))
+    .finally(() => {
+      buttonElement.disabled = false;
+    });
+};
+
+// Обработчик удаления карточки
+const handleCardDelete = ({ cardId, buttonElement }) => {
+  openModal(popupConfirm);
+
+  const confirmButtonClickHandler = () => {
+    buttonElement.disabled = true;
+
+    deleteCard(cardId)
+      .then(() => {
+        buttonElement.closest(".card").remove();
+        closeModal(popupConfirm);
+      })
+      .catch((error) => {
+        buttonElement.disabled = false;
+        console.error(error);
+      });
+  };
+  
+  popupConfirmButton.addEventListener("click", confirmButtonClickHandler, {
+    once: true,
+  });
+};
+
+export { createCard, handleCardDelete, handleCardLike };
