@@ -1,6 +1,6 @@
 # Mesto project
 ## Проектная работа от Яндекс Практикум
-
+<img width="1411" src="https://github.com/Jetskici00/mesto-project-ff/assets/94981434/e9f00511-d5e2-404c-b157-24ae20e2775c">
 
 Одностраничный, адаптивный сайт "Mesto project", созданный с использованием HTML, CSS, Webpack и JavaScript. Проект позволяет пользователям делиться карточками с красивыми местами.
 ## Описание
